@@ -1,5 +1,6 @@
 from arithmetic_toolkit import Vectors
 from collections import Counter
+import tensorflow as tf
 
 class knn_scratch():
 	"""docstring for KNN"""
@@ -82,3 +83,7 @@ class network_scratch
 
 	def predict(input, network):
 		return feed_forward(network, input)[-1]
+
+class knn():
+	def print():
+		print "class not implemented"
