@@ -1,6 +1,7 @@
 from arithmetic_toolkit import Vectors
 from collections import Counter
-import tensorflow as tf
+# import tensorflow as tf
+from sklearn.neighbors import KNeighborsClassifier
 
 class knn_scratch():
 	"""docstring for KNN"""
@@ -85,5 +86,17 @@ class network_scratch
 		return feed_forward(network, input)[-1]
 
 class knn():
-	def print():
-		print "class not implemented"
+	# training data format -
+	# X = [[0], [1], [2], [3]]
+	# y = [0, 0, 1, 1]
+	def __init__(self, k):
+		self.model = KNeighborsClassifier(n_neighbors=k)
+
+	def train(X,y):
+		self.model.fit(X,y)
+
+	def preditct(self, x):
+		return self.model.predict(x)
+
+	def probabilities(self, x):
+		return self.model.predict_proba(x)
