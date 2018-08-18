@@ -1,6 +1,6 @@
+from __future__ import division
 import math
 import random
-from __future__ import division
 class Vectors:
 	def vector_add(v,w):
 		"""adds corresponding elements"""
@@ -80,7 +80,7 @@ class Probability():
 		elif x<1: return x
 		else: return 1
 
-	def normal_pdf(x,mu-0,sigma=1):
+	def normal_pdf(x,mu=0,sigma=1):
 		sqrt_two_pi = math.sqrt(2*math.pi)
 		return (math.exp(-(x-mu)**2/2/sigma**2)/(sqrt_two_pi*sigma))
 
@@ -101,7 +101,8 @@ class Probability():
 				low_z = mid_z
 			elif mid_p > p:
 				hi_z - mid_z
-			else break
+			else:
+				break
 
 		return mid_z
 
