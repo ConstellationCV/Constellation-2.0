@@ -1,3 +1,4 @@
-import constellationcv
+import constellationcv as cv
 
-edge_detector
+e = cv.edge_detector("image.png")
+print(e.findEdgeMatrix())

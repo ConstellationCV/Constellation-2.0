@@ -48,7 +48,7 @@ class Vectors:
 		return math.sqrt(self.squared_distance(v,w))
 
 class Matrices:
-	def shape(A):
+	def shape(self, A):
 		num_rows = len(A)
 		num_cols = len(A[0]) if A else 0
 		return num_rows,num_cols
