@@ -18,12 +18,16 @@ class edge_detector(object):
 		edge_mat = np.zeros(shape=(num_rows,num_cols))
 		row_count = 0
 		col_count = 0
+		threshold=7
 		for row in img:
 			for col in row:
-				if not row_count>=num_rows-1 and not col_count>=num_cols-1 and not row_count>=0 and not col_count>=0:
-					print num_cols
-					if v.distance(img[row_count][col_count],img[row_count-1][col_count])>50 or v.distance(img[row_count][col_count],img[row_count+1][col_count])>50 or v.distance(img[row_count][col_count],img[row_count][col_count-1])>50 or v.distance(img[row_count][col_count],img[row_count][col_count+1])>50:
+				if row_count>=num_rows-1 or col_count>=num_cols-1 or row_count==0 or col_count==0:
+					col_count += 1
+					continue
+				else:
+					if v.distance(img[row_count][col_count],img[row_count-1][col_count])>threshold or v.distance(img[row_count][col_count],img[row_count+1][col_count])>threshold or v.distance(img[row_count][col_count],img[row_count][col_count-1])>threshold or v.distance(img[row_count][col_count],img[row_count][col_count+1])>threshold:
 						edge_mat[row_count][col_count]=1
 				col_count += 1
+			col_count = 0
 			row_count+=1
 		return edge_mat
