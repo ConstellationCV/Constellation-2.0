@@ -2,6 +2,7 @@ import cv2
 from arithmetic_toolkit import Matrices
 from arithmetic_toolkit import Vectors
 import numpy as np
+
 class edge_detector(object):
 	"""class which contains all functions to extract edges from an image"""
 	def __init__(self, imagePath):
@@ -15,10 +16,11 @@ class edge_detector(object):
 		img = self.img_rgb
 		num_rows = len(img)
 		num_cols = len(img[0])
-		edge_mat = np.zeros(shape=(num_rows,num_cols))
+		edge_mat = np.around(np.zeros(shape=(num_rows,num_cols)),decimals=0)
 		row_count = 0
 		col_count = 0
 		threshold=7
+		reached = False
 		for row in img:
 			for col in row:
 				if row_count>=num_rows-1 or col_count>=num_cols-1 or row_count==0 or col_count==0:
@@ -31,3 +33,5 @@ class edge_detector(object):
 			col_count = 0
 			row_count+=1
 		return edge_mat
+
+	def calculateBestFit
