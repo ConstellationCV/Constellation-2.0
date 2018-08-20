@@ -35,6 +35,22 @@ class edge_detector(object):
 			row_count+=1
 		return edge_mat
 
+	def outputEdgePic(self,edge_mat):
+		row_count=0
+		col_count=0
+		for row in self.image_gray:
+			col_count=0
+			for col in row:
+				self.image_gray[row_count][col_count]=edge_mat[row_count][col_count]
+				if edge_mat[row_count][col_count]==1:
+					self.image_gray[row_count][col_count]=0
+				else:
+					self.image_gray[row_count][col_count]=252
+				col_count+=1
+			row_count+=1
+		cv2.imwrite('edges_output.png',self.image_gray)
+
+
 	def calculateBestFit(self, list_of_pts):
 		transform_factor = list_of_pts[0]
 		x_transform = float(transform_factor[0])
@@ -67,9 +83,20 @@ class edge_detector(object):
 
 	def formAllLines(self,edge_mat):
 		self.lineFormationMatrix = np.copy(edge_mat)
+		edge_lines_list = []
+		row_count=0
+		col_count=0
+		for row in edge_mat:
+			col_count=0
+			for col in row:
+				if edge_mat[row_count][col_count]==1:
+					edge_lines_list.append(self.formLine([row_count,col_count]))
+				col_count+=1
+			row_count+=1
 
-	def formLine(self):
+	def formLine(self, base_point):
 		edges_remaining = self.lineFormationMatrix
+		# return line
 
 	def cost(self,line1,line2):
 		return self.findAngleBetween(line1[0],line2[0])
