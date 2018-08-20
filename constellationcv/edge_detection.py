@@ -20,7 +20,7 @@ class edge_detector(object):
 		edge_mat = np.around(np.zeros(shape=(num_rows,num_cols)),decimals=0)
 		row_count = 0
 		col_count = 0
-		threshold=7
+		threshold=10
 		reached = False
 		for row in img:
 			for col in row:
@@ -35,7 +35,7 @@ class edge_detector(object):
 			row_count+=1
 		return edge_mat
 
-	def outputEdgePic(self,edge_mat):
+	def outputEdgeImage(self,edge_mat, output_path):
 		row_count=0
 		col_count=0
 		for row in self.image_gray:
@@ -48,7 +48,7 @@ class edge_detector(object):
 					self.image_gray[row_count][col_count]=252
 				col_count+=1
 			row_count+=1
-		cv2.imwrite('edges_output.png',self.image_gray)
+		cv2.imwrite(output_path,self.image_gray)
 
 
 	def calculateBestFit(self, list_of_pts):
@@ -81,6 +81,34 @@ class edge_detector(object):
 		theta2=math.degrees(atan(m2))
 		return theta2-theta1
 
+	def evalLinearFunction(self,m,b,x):
+		return (m*x)+b
+
+	def isWithinParallelBoundaries(self, m,b,num_points):
+
+	def findClosestPoint(self,prev_point):
+		edges_remaining = self.lineFormationMatrix
+		found=False
+		ring_diam = 1
+		while not found:
+			if edges_remaining[prev_point[0]+ring_diam][prev_point[1]]==1: # right
+				return [prev_point[0]+ring_diam,prev_point[1]]
+			if edges_remaining[prev_point[0]+ring_diam][prev_point[1]+ring_diam]==1: #right up
+				return [prev_point[0]+ring_diam,prev_point[1]+ring_diam]
+			if edges_remaining[prev_point[0]+ring_diam][prev_point[1]-ring_diam]==1: #right down
+				return [prev_point[0]+ring_diam,prev_point[1]-ring_diam]
+			if edges_remaining[prev_point[0]][prev_point[1]+ring_diam]==1: # up
+				return [prev_point[0],prev_point[1]+ring_diam]
+			if edges_remaining[prev_point[0]][prev_point[1]-ring_diam]==1: # down
+				return [prev_point[0],prev_point[1]-ring_diam]
+			if edges_remaining[prev_point[0]-ring_diam][prev_point[1]]==1: # left
+				return [prev_point[0]-ring_diam,prev_point[1]]
+			if edges_remaining[prev_point[0]-ring_diam][prev_point[1]-ring_diam]==1: # left down
+				return [prev_point[0]-ring_diam,prev_point[1]-ring_diam]
+			if edges_remaining[prev_point[0]-ring_diam][prev_point[1]+ring_diam]==1: # left up
+				return [prev_point[0]-ring_diam,prev_point[1]+ring_diam]
+			ring_diam+=1
+
 	def formAllLines(self,edge_mat):
 		self.lineFormationMatrix = np.copy(edge_mat)
 		edge_lines_list = []
@@ -96,6 +124,7 @@ class edge_detector(object):
 
 	def formLine(self, base_point):
 		edges_remaining = self.lineFormationMatrix
+		last_point = base_point
 		# return line
 
 	def cost(self,line1,line2):
