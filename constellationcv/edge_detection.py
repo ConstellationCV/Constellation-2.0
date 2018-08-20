@@ -123,17 +123,30 @@ class edge_detector(object):
 			row_count+=1
 
 	def formLine(self, base_point):
+		# method setup
+		v =Vectors()
 		edges_remaining = self.lineFormationMatrix
+
+		# loop setup
 		second_pt = self.findClosestPoint(base_point)
-		list_of_pts=[base_point, second_pt]
-		m,b = self.calculateBestFit(list_of_pts)
 		third_pt = self.findClosestPoint(second_pt)
+		list_of_pts=[base_point, second_pt, third_pt]
+		m,b = self.calculateBestFit(list_of_pts)
+		next_pt=self.findClosestPoint(third_pt)
 		potentialpts=list_of_pts[:]
-		potentialpts.append(third_pt)
+		potentialpts.append(next_pt)
 		nextm, nextb = self.calculateBestFit(potentialpts)
-		while self.findAngleBetween(m,nextm):
+
+		# loop variables
+		last_point = third_pt
+
+		while self.findAngleBetween(m,nextm)<20 and v.distance(last_point,next_pt)<5:
 
 		return m,b
+
+	def removeAddedPtsFromLineFormationMatrix(self,list_of_pts):
+		for pt in list_of_pts:
+			self.lineFormationMatrix[pt[0]][pt[1]]=0
 
 	def cost(self,line1,line2):
 		return self.findAngleBetween(line1[0],line2[0])
