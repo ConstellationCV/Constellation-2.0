@@ -127,8 +127,12 @@ class edge_detector(object):
 		second_pt = self.findClosestPoint(base_point)
 		list_of_pts=[base_point, second_pt]
 		m,b = self.calculateBestFit(list_of_pts)
-		m = 0
-		b = 0
+		third_pt = self.findClosestPoint(second_pt)
+		potentialpts=list_of_pts[:]
+		potentialpts.append(third_pt)
+		nextm, nextb = self.calculateBestFit(potentialpts)
+		while self.findAngleBetween(m,nextm):
+
 		return m,b
 
 	def cost(self,line1,line2):
