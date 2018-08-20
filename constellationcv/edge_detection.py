@@ -57,15 +57,25 @@ class edge_detector(object):
 		for pt in list_of_pts:
 			m_denominator+=(pt[0]-x_bar)*(pt[0]-x_bar)
 		m=m_numerator/m_denominator
-		# b = (y_sum-(m*x_sum))/n
-		return m,transform_factor[0],transform_factor[1]
+		b=m*x_transform*-1+y_transform
+		return m,b
 
-	def findAngleBetween(self,m1,m2)
+	def findAngleBetween(self,m1,m2):
 		theta1=math.degrees(atan(m1))
 		theta2=math.degrees(atan(m2))
 		return theta2-theta1
 
+	def formAllLines(self,edge_mat):
+		self.lineFormationMatrix = np.copy(edge_mat)
 
+	def formLine(self):
+		edges_remaining = self.lineFormationMatrix
+
+	def cost(self,line1,line2):
+		return self.findAngleBetween(line1[0],line2[0])
+
+	def value(self,x):
+		return math.sqrt(x)
 
 
 
