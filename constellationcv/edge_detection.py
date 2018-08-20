@@ -145,7 +145,10 @@ class edge_detector(object):
 			list_of_pts.append(next_pt)
 			m,b = self.calculateBestFit(list_of_pts)
 			self.lineFormationMatrix[next_pt[0]][next_pt[1]]=0
-
+			next_pt = self.findClosestPoint(next_pt)
+			potentialpts=list_of_pts[:]
+			potentialpts.append(next_pt)
+			nextm, nextb = self.calculateBestFit(potentialpts)
 		return m,b
 
 	def removeAddedPtsFromLineFormationMatrix(self,list_of_pts):
