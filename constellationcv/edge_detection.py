@@ -124,8 +124,12 @@ class edge_detector(object):
 
 	def formLine(self, base_point):
 		edges_remaining = self.lineFormationMatrix
-		last_point = base_point
-		# return line
+		second_pt = self.findClosestPoint(base_point)
+		list_of_pts=[base_point, second_pt]
+		m,b = self.calculateBestFit(list_of_pts)
+		m = 0
+		b = 0
+		return m,b
 
 	def cost(self,line1,line2):
 		return self.findAngleBetween(line1[0],line2[0])
