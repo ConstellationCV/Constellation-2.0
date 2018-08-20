@@ -34,4 +34,25 @@ class edge_detector(object):
 			row_count+=1
 		return edge_mat
 
-	def calculateBestFit
+	def calculateBestFit(self, list_of_pts):
+		transform_factor = list_of_pts[0]
+		for pt in list_of_pts:
+			pt[0]=pt[0]-transform_factor[0]
+			pt[1]=pt[1]-transform_factor[1]
+		x_sum = 0
+		y_sum = 0
+		for pt in list_of_pts:
+			x_sum+=pt[0]
+			y_sum+=pt[1]
+		n = len(list_of_pts)
+		x_bar = x_sum/n
+		y_bar = y_sum/n
+		m_numerator = 0
+		for pt in list_of_pts:
+			m_numerator+=(pt[0]-x_bar)*(pt[1]-y_bar)
+		m_denominator = 0
+		for pt in list_of_pts:
+			m_denominator+=(pt[0]-x_bar)*(pt[0]-x_bar)
+		m=m_numerator/m_denominator
+		b = (y_sum-(m*x_sum))/n
+		return m,transform_factor[0],transform_factor[1]
