@@ -9,6 +9,9 @@ class graph_node(object):
 	def getNeighbors(self):
 		return self.neighbors
 
+	def addNeighbor(self,node):
+		self.neighbors.append(node)
+
 	def getCoords(self):
 		return [self.x,self.y]
 

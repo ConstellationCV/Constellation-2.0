@@ -94,6 +94,19 @@ class edge_detector(object):
 
 	# def isWithinParallelBoundaries(self, m,b,num_points):
 
+	def createEdgePointsList(self, edge_mat):
+		r=0
+		c=0
+		ptslist = []
+		for row in edge_mat:
+			r+=1
+			c=0
+			for col in row:
+				if edge_mat[r][c]==1:
+					ptslist.append([r,c])
+				c+=1
+		self.edge_pts_list = ptslist
+
 	def findClosestPoint(self,prev_point):
 		edges_remaining = self.lineFormationMatrix
 		found=False

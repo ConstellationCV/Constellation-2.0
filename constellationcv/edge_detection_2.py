@@ -64,9 +64,13 @@ class edge_detector_2(object):
 			for col in row:
 				if col==1:
 					tempNList = []
-					if g.findNode(row,col)==1:
-					for neighbor in self.listOfEdgeNeighbors(row_count,col_count):
-						tempNList.append()
+					if g.findNode(row_count,col_count)==-1:
+						tempNode = graph_node(row_count,col_count,[])
+						for neighbor in self.listOfEdgeNeighbors(row_count,col_count):
+							tempNode.addNeighbor()
+					else:
+						tempNode = g.findNode(row_count,col_count)
+					
 				col_count+=1
 			row_count+=1
 
