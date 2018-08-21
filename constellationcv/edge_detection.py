@@ -163,7 +163,7 @@ class edge_detector(object):
 		# loop variables
 		last_point = third_pt
 
-		while self.findAngleBetween(m,nextm)<2 and v.distance(last_point,next_pt)<100 and v.distance(last_point,[next_pt[0],self.evalLinearFunction(m,b,next_pt[0])])<100 and not next_pt==[-1,1]:
+		while self.findAngleBetween(m,nextm)<10 and v.distance(last_point,next_pt)<100 and v.distance(last_point,[next_pt[0],self.evalLinearFunction(m,b,next_pt[0])])<100 and not next_pt==[-1,1]:
 			list_of_pts.append(next_pt)
 			m,b = self.calculateBestFit(list_of_pts)
 			self.lineFormationMatrix[next_pt[0]][next_pt[1]]=0
@@ -174,8 +174,8 @@ class edge_detector(object):
 			nextm, nextb = self.calculateBestFit(potentialpts)
 		if len(list_of_pts)==3:
 			return [-1,-1,-1,-1]
-		# print "------------"
-		# print list_of_pts
+		print "------------"
+		print list_of_pts
 		return [m,b,base_point,last_point]
 
 	def removeAddedPtsFromLineFormationMatrix(self,list_of_pts):
@@ -196,8 +196,10 @@ class edge_detector(object):
 			pt.reverse()
 		return list_of_pts
 
-
-
+	def printEquations(self, list_of_fxns):
+		for fxn in list_of_fxns:
+			eqn = "y="+str(fxn[0])+"x+"+str(fxn[1])+" { "+str(fxn[2][0]) + "<=x<="+str(fxn[3][0])+" }"
+			print eqn
 
 
 
