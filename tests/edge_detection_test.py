@@ -3,7 +3,7 @@ import numpy as np
 
 e = cv.edge_detector("cube.png")
 edgeMat = e.findEdgeMatrix()
-print e.createEdgePointsList(edgeMat)
+e.createEdgePointsList(edgeMat)
 # e.outputEdgeImage(edgeMat,"edges_output.png")
 # e.printEquations(e.formAllLines(edgeMat))
 # np.savetxt('outputmat.txt', edgeMat)

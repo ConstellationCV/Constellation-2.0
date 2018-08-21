@@ -106,24 +106,19 @@ class edge_detector(object):
 				c+=1
 			r+=1
 		self.edge_pts_list = self.flipXY(sorted(ptslist))
+		print type(self.edge_pts_list)
 		return self.edge_pts_list
 
 	def formAllLines(self,edge_list):
 		edge_lines_list = []
 		self.lines_edge_pts_list = copy.deepcopy(edge_list)
 		for pt in self.lines_edge_pts_list:
-			tempLine = self.formLine(self,base_point)
+			tempLine = self.formLine(pt)
 			if tempLine[0]==-1:
 				continue
 			else:
 				edge_lines_list.append(tempLine)
 		return edge_lines_list
-
-	def roundAll(self, mat):
-		for row in mat:
-			for col in row:
-				col = np.around(col)
-		return mat
 
 	def formLine(self, base_point):
 		# method setup
@@ -163,6 +158,16 @@ class edge_detector(object):
 		print list_of_pts
 		return [m,b,base_point,last_point]
 
+
+	# helper functions, commented out as not needed	
+
+	"""
+	def roundAll(self, mat):
+		for row in mat:
+			for col in row:
+				col = np.around(col)
+		return mat
+
 	def removeAddedPtsFromLineFormationMatrix(self,list_of_pts):
 		for pt in list_of_pts:
 			self.lineFormationMatrix[pt[0]][pt[1]]=0
@@ -172,6 +177,7 @@ class edge_detector(object):
 
 	def value(self,x):
 		return math.sqrt(x)
+	"""
 
 	def cleanListOfLines(self, list_of_lines):
 		return 1
