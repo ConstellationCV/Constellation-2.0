@@ -55,22 +55,23 @@ class edge_detector(object):
 		transform_factor = list_of_pts[0]
 		x_transform = float(transform_factor[0])
 		y_transform = float(transform_factor[1])
-		for pt in list_of_pts:
+		new_list = list_of_pts[:]
+		for pt in new_list:
 			pt[0]=float(pt[0])-x_transform
 			pt[1]=float(pt[1])-y_transform
 		x_sum = 0
 		y_sum = 0
-		for pt in list_of_pts:
+		for pt in new_list:
 			x_sum+=pt[0]
 			y_sum+=pt[1]
 		n = len(list_of_pts)
 		x_bar = x_sum/n
 		y_bar = y_sum/n
 		m_numerator = 0
-		for pt in list_of_pts:
+		for pt in new_list:
 			m_numerator+=(pt[0]-x_bar)*(pt[1]-y_bar)
 		m_denominator = 0
-		for pt in list_of_pts:
+		for pt in new_list:
 			m_denominator+=(pt[0]-x_bar)*(pt[0]-x_bar)
 		m=m_numerator/m_denominator
 		b=m*x_transform*-1+y_transform
