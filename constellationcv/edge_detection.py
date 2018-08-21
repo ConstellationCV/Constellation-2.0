@@ -105,7 +105,7 @@ class edge_detector(object):
 				if edge_mat[r][c]==1:
 					ptslist.append([r,c])
 				c+=1
-		self.edge_pts_list = ptslist
+		self.edge_pts_list = sorted(ptslist)
 
 	def findClosestPoint(self,prev_point):
 		edges_remaining = self.lineFormationMatrix
