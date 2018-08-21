@@ -54,6 +54,7 @@ class edge_detector(object):
 
 
 	def calculateBestFit(self, list_of_pts):
+		self.flipXY(list_of_pts)
 		transform_factor = list_of_pts[0]
 		x_transform = float(transform_factor[0])
 		y_transform = float(transform_factor[1])
@@ -75,10 +76,11 @@ class edge_detector(object):
 		m_denominator = 0
 		for pt in new_list:
 			m_denominator+=(pt[0]-x_bar)*(pt[0]-x_bar)
-		print list_of_pts
-		print m_numerator
-		print m_denominator
-		m=m_numerator/m_denominator
+		try:
+			m=m_numerator/m_denominator
+		except Exception as e:
+			# print list_of_pts
+			m=0
 		b=m*x_transform*-1+y_transform
 		return m,b
 
@@ -97,23 +99,26 @@ class edge_detector(object):
 		found=False
 		ring_diam = 1
 		while not found:
-			if edges_remaining[prev_point[0]+ring_diam][prev_point[1]]==1: # right
-				return [prev_point[0]+ring_diam,prev_point[1]]
-			if edges_remaining[prev_point[0]+ring_diam][prev_point[1]+ring_diam]==1: #right up
-				return [prev_point[0]+ring_diam,prev_point[1]+ring_diam]
-			if edges_remaining[prev_point[0]+ring_diam][prev_point[1]-ring_diam]==1: #right down
-				return [prev_point[0]+ring_diam,prev_point[1]-ring_diam]
-			if edges_remaining[prev_point[0]][prev_point[1]+ring_diam]==1: # up
-				return [prev_point[0],prev_point[1]+ring_diam]
-			if edges_remaining[prev_point[0]][prev_point[1]-ring_diam]==1: # down
-				return [prev_point[0],prev_point[1]-ring_diam]
-			if edges_remaining[prev_point[0]-ring_diam][prev_point[1]]==1: # left
-				return [prev_point[0]-ring_diam,prev_point[1]]
-			if edges_remaining[prev_point[0]-ring_diam][prev_point[1]-ring_diam]==1: # left down
-				return [prev_point[0]-ring_diam,prev_point[1]-ring_diam]
-			if edges_remaining[prev_point[0]-ring_diam][prev_point[1]+ring_diam]==1: # left up
-				return [prev_point[0]-ring_diam,prev_point[1]+ring_diam]
-			ring_diam+=1
+			try:
+				if edges_remaining[prev_point[0]+ring_diam][prev_point[1]]==1: # right
+					return [prev_point[0]+ring_diam,prev_point[1]]
+				if edges_remaining[prev_point[0]+ring_diam][prev_point[1]+ring_diam]==1: #right up
+					return [prev_point[0]+ring_diam,prev_point[1]+ring_diam]
+				if edges_remaining[prev_point[0]+ring_diam][prev_point[1]-ring_diam]==1: #right down
+					return [prev_point[0]+ring_diam,prev_point[1]-ring_diam]
+				if edges_remaining[prev_point[0]][prev_point[1]+ring_diam]==1: # up
+					return [prev_point[0],prev_point[1]+ring_diam]
+				if edges_remaining[prev_point[0]][prev_point[1]-ring_diam]==1: # down
+					return [prev_point[0],prev_point[1]-ring_diam]
+				if edges_remaining[prev_point[0]-ring_diam][prev_point[1]]==1: # left
+					return [prev_point[0]-ring_diam,prev_point[1]]
+				if edges_remaining[prev_point[0]-ring_diam][prev_point[1]-ring_diam]==1: # left down
+					return [prev_point[0]-ring_diam,prev_point[1]-ring_diam]
+				if edges_remaining[prev_point[0]-ring_diam][prev_point[1]+ring_diam]==1: # left up
+					return [prev_point[0]-ring_diam,prev_point[1]+ring_diam]
+				ring_diam+=1
+			except Exception as e:
+				 return [-1,-1]
 
 	def formAllLines(self,edge_mat):
 		self.lineFormationMatrix = self.roundAll(np.copy(edge_mat))
@@ -124,8 +129,11 @@ class edge_detector(object):
 			col_count=0
 			for col in row:
 				if edge_mat[row_count][col_count]==1:
-					tempM, tempB = self.formLine([row_count,col_count])
-					edge_lines_list.append([tempM,tempB])
+					tempM, tempB, tempStart, tempEnd = self.formLine([row_count,col_count])
+					if not tempM==-1:
+						edge_lines_list.append([tempM,tempB, tempStart, tempEnd])
+					else:
+						continue
 				col_count+=1
 			row_count+=1
 		return edge_lines_list
@@ -155,15 +163,20 @@ class edge_detector(object):
 		# loop variables
 		last_point = third_pt
 
-		while self.findAngleBetween(m,nextm)<20 and v.distance(last_point,next_pt)<120 and v.distance(last_point,[next_pt[0],self.evalLinearFunction(m,b,next_pt[0])])<120:
+		while self.findAngleBetween(m,nextm)<2 and v.distance(last_point,next_pt)<100 and v.distance(last_point,[next_pt[0],self.evalLinearFunction(m,b,next_pt[0])])<100 and not next_pt==[-1,1]:
 			list_of_pts.append(next_pt)
 			m,b = self.calculateBestFit(list_of_pts)
 			self.lineFormationMatrix[next_pt[0]][next_pt[1]]=0
+			last_point=next_pt
 			next_pt = self.findClosestPoint(next_pt)
 			potentialpts=copy.deepcopy(list_of_pts)
 			potentialpts.append(next_pt)
 			nextm, nextb = self.calculateBestFit(potentialpts)
-		return [m,b]
+		if len(list_of_pts)==3:
+			return [-1,-1,-1,-1]
+		# print "------------"
+		# print list_of_pts
+		return [m,b,base_point,last_point]
 
 	def removeAddedPtsFromLineFormationMatrix(self,list_of_pts):
 		for pt in list_of_pts:
@@ -174,6 +187,14 @@ class edge_detector(object):
 
 	def value(self,x):
 		return math.sqrt(x)
+
+	def cleanListOfLines(self, list_of_lines):
+		return 1
+
+	def flipXY(self, list_of_pts):
+		for pt in list_of_pts:
+			pt.reverse()
+		return list_of_pts
 
 
 
