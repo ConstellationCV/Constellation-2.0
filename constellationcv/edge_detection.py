@@ -2,6 +2,8 @@ import cv2
 from arithmetic_toolkit import Matrices
 from arithmetic_toolkit import Vectors
 import numpy as np
+import copy
+import math
 # import time # for testing efficiency, remove in production build
 
 class edge_detector(object):
@@ -55,7 +57,7 @@ class edge_detector(object):
 		transform_factor = list_of_pts[0]
 		x_transform = float(transform_factor[0])
 		y_transform = float(transform_factor[1])
-		new_list = list_of_pts[:]
+		new_list = copy.deepcopy(list_of_pts)
 		for pt in new_list:
 			pt[0]=float(pt[0])-x_transform
 			pt[1]=float(pt[1])-y_transform
@@ -78,8 +80,8 @@ class edge_detector(object):
 		return m,b
 
 	def findAngleBetween(self,m1,m2):
-		theta1=math.degrees(atan(m1))
-		theta2=math.degrees(atan(m2))
+		theta1=math.degrees(math.atan(m1))
+		theta2=math.degrees(math.atan(m2))
 		return theta2-theta1
 
 	def evalLinearFunction(self,m,b,x):
@@ -143,19 +145,19 @@ class edge_detector(object):
 		m,b = self.calculateBestFit(list_of_pts)
 		self.removeAddedPtsFromLineFormationMatrix(list_of_pts)
 		next_pt=self.findClosestPoint(third_pt)
-		potentialpts=list_of_pts[:]
+		potentialpts=copy.deepcopy(list_of_pts)
 		potentialpts.append(next_pt)
 		nextm, nextb = self.calculateBestFit(potentialpts)
 
 		# loop variables
 		last_point = third_pt
 
-		while self.findAngleBetween(m,nextm)<20 and v.distance(last_point,next_pt)<7 and v.distance(last_point,[next_pt[0],self.evalLinearFunction(next_pt[0])])<20:
+		while self.findAngleBetween(m,nextm)<20 and v.distance(last_point,next_pt)<7 and v.distance(last_point,[next_pt[0],self.evalLinearFunction(m,b,next_pt[0])])<20:
 			list_of_pts.append(next_pt)
 			m,b = self.calculateBestFit(list_of_pts)
 			self.lineFormationMatrix[next_pt[0]][next_pt[1]]=0
 			next_pt = self.findClosestPoint(next_pt)
-			potentialpts=list_of_pts[:]
+			potentialpts=copy.deepcopy(list_of_pts)
 			potentialpts.append(next_pt)
 			nextm, nextb = self.calculateBestFit(potentialpts)
 		return [m,b]
