@@ -155,7 +155,7 @@ class edge_detector(object):
 		# loop variables
 		last_point = third_pt
 
-		while self.findAngleBetween(m,nextm)<20 and v.distance(last_point,next_pt)<50 and v.distance(last_point,[next_pt[0],self.evalLinearFunction(m,b,next_pt[0])])<30:
+		while self.findAngleBetween(m,nextm)<20 and v.distance(last_point,next_pt)<120 and v.distance(last_point,[next_pt[0],self.evalLinearFunction(m,b,next_pt[0])])<120:
 			list_of_pts.append(next_pt)
 			m,b = self.calculateBestFit(list_of_pts)
 			self.lineFormationMatrix[next_pt[0]][next_pt[1]]=0
