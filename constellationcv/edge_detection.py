@@ -110,21 +110,10 @@ class edge_detector(object):
 
 	def formAllLines(self,edge_list):
 		edge_lines_list = []
-		edge_pts_list = copy.deepcopy(edge_list)
+		self.lines_edge_pts_list = copy.deepcopy(edge_list)
+		for pt in self.lines_edge_pts_list:
+			self.formLine(self,base_point)
 
-		row_count=0
-		col_count=0
-		for row in edge_mat:
-			col_count=0
-			for col in row:
-				if edge_mat[row_count][col_count]==1:
-					tempM, tempB, tempStart, tempEnd = self.formLine([row_count,col_count])
-					if not tempM==-1:
-						edge_lines_list.append([tempM,tempB, tempStart, tempEnd])
-					else:
-						continue
-				col_count+=1
-			row_count+=1
 		return edge_lines_list
 
 	def roundAll(self, mat):
@@ -136,15 +125,18 @@ class edge_detector(object):
 	def formLine(self, base_point):
 		# method setup
 		v =Vectors()
-		edges_remaining = self.lineFormationMatrix
+		by_distance = sorted(copy.deepcopy(self.lines_edge_pts_list), key=lambda (point): v.distance(base_point,point))
 
 		# loop setup
-		second_pt = self.findClosestPoint(base_point)
-		third_pt = self.findClosestPoint(second_pt)
+		second_pt = by_distance[1]
+		self.lines_edge_pts_list.remove(base_point)
+		by_distance = sorted(copy.deepcopy(self.lines_edge_pts_list), key=lambda (point): v.distance(second_pt,point))
+		third_pt = by_distance[1]
+		self.lines_edge_pts_list.remove(base_point)
 		list_of_pts=[base_point, second_pt, third_pt]
 		m,b = self.calculateBestFit(list_of_pts)
-		self.removeAddedPtsFromLineFormationMatrix(list_of_pts)
-		next_pt=self.findClosestPoint(third_pt)
+		by_distance = sorted(copy.deepcopy(self.lines_edge_pts_list), key=lambda (point): v.distance(third_pt,point))
+		next_pt = by_distance[1]
 		potentialpts=copy.deepcopy(list_of_pts)
 		potentialpts.append(next_pt)
 		nextm, nextb = self.calculateBestFit(potentialpts)
@@ -154,6 +146,7 @@ class edge_detector(object):
 
 		while self.findAngleBetween(m,nextm)<10 and v.distance(last_point,next_pt)<100 and v.distance(last_point,[next_pt[0],self.evalLinearFunction(m,b,next_pt[0])])<100 and not next_pt==[-1,1]:
 			list_of_pts.append(next_pt)
+			self.lines_edge_pts_list.remove(next_pt)
 			m,b = self.calculateBestFit(list_of_pts)
 			self.lineFormationMatrix[next_pt[0]][next_pt[1]]=0
 			last_point=next_pt
