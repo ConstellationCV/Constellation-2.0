@@ -112,8 +112,11 @@ class edge_detector(object):
 		edge_lines_list = []
 		self.lines_edge_pts_list = copy.deepcopy(edge_list)
 		for pt in self.lines_edge_pts_list:
-			self.formLine(self,base_point)
-
+			tempLine = self.formLine(self,base_point)
+			if tempLine[0]==-1:
+				continue
+			else:
+				edge_lines_list.append(tempLine)
 		return edge_lines_list
 
 	def roundAll(self, mat):
@@ -131,12 +134,12 @@ class edge_detector(object):
 		second_pt = by_distance[1]
 		self.lines_edge_pts_list.remove(base_point)
 		by_distance = sorted(copy.deepcopy(self.lines_edge_pts_list), key=lambda (point): v.distance(second_pt,point))
-		third_pt = by_distance[1]
+		third_pt = by_distance[0]
 		self.lines_edge_pts_list.remove(base_point)
 		list_of_pts=[base_point, second_pt, third_pt]
 		m,b = self.calculateBestFit(list_of_pts)
 		by_distance = sorted(copy.deepcopy(self.lines_edge_pts_list), key=lambda (point): v.distance(third_pt,point))
-		next_pt = by_distance[1]
+		next_pt = by_distance[0]
 		potentialpts=copy.deepcopy(list_of_pts)
 		potentialpts.append(next_pt)
 		nextm, nextb = self.calculateBestFit(potentialpts)
@@ -148,9 +151,9 @@ class edge_detector(object):
 			list_of_pts.append(next_pt)
 			self.lines_edge_pts_list.remove(next_pt)
 			m,b = self.calculateBestFit(list_of_pts)
-			self.lineFormationMatrix[next_pt[0]][next_pt[1]]=0
 			last_point=next_pt
-			next_pt = self.findClosestPoint(next_pt)
+			by_distance = sorted(copy.deepcopy(self.lines_edge_pts_list), key=lambda (point): v.distance(last_point,point))
+			next_pt = by_distance[0]
 			potentialpts=copy.deepcopy(list_of_pts)
 			potentialpts.append(next_pt)
 			nextm, nextb = self.calculateBestFit(potentialpts)
