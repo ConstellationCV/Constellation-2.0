@@ -99,43 +99,19 @@ class edge_detector(object):
 		c=0
 		ptslist = []
 		for row in edge_mat:
-			r+=1
 			c=0
 			for col in row:
 				if edge_mat[r][c]==1:
 					ptslist.append([r,c])
 				c+=1
-		self.edge_pts_list = sorted(ptslist)
+			r+=1
+		self.edge_pts_list = self.flipXY(sorted(ptslist))
+		return self.edge_pts_list
 
-	def findClosestPoint(self,prev_point):
-		edges_remaining = self.lineFormationMatrix
-		found=False
-		ring_diam = 1
-		while not found:
-			try:
-				if edges_remaining[prev_point[0]+ring_diam][prev_point[1]]==1: # right
-					return [prev_point[0]+ring_diam,prev_point[1]]
-				if edges_remaining[prev_point[0]+ring_diam][prev_point[1]+ring_diam]==1: #right up
-					return [prev_point[0]+ring_diam,prev_point[1]+ring_diam]
-				if edges_remaining[prev_point[0]+ring_diam][prev_point[1]-ring_diam]==1: #right down
-					return [prev_point[0]+ring_diam,prev_point[1]-ring_diam]
-				if edges_remaining[prev_point[0]][prev_point[1]+ring_diam]==1: # up
-					return [prev_point[0],prev_point[1]+ring_diam]
-				if edges_remaining[prev_point[0]][prev_point[1]-ring_diam]==1: # down
-					return [prev_point[0],prev_point[1]-ring_diam]
-				if edges_remaining[prev_point[0]-ring_diam][prev_point[1]]==1: # left
-					return [prev_point[0]-ring_diam,prev_point[1]]
-				if edges_remaining[prev_point[0]-ring_diam][prev_point[1]-ring_diam]==1: # left down
-					return [prev_point[0]-ring_diam,prev_point[1]-ring_diam]
-				if edges_remaining[prev_point[0]-ring_diam][prev_point[1]+ring_diam]==1: # left up
-					return [prev_point[0]-ring_diam,prev_point[1]+ring_diam]
-				ring_diam+=1
-			except Exception as e:
-				 return [-1,-1]
-
-	def formAllLines(self,edge_mat):
-		self.lineFormationMatrix = self.roundAll(np.copy(edge_mat))
+	def formAllLines(self,edge_list):
 		edge_lines_list = []
+		edge_pts_list = copy.deepcopy(edge_list)
+
 		row_count=0
 		col_count=0
 		for row in edge_mat:
