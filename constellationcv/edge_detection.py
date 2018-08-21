@@ -84,7 +84,7 @@ class edge_detector(object):
 	def evalLinearFunction(self,m,b,x):
 		return (m*x)+b
 
-	def isWithinParallelBoundaries(self, m,b,num_points):
+	# def isWithinParallelBoundaries(self, m,b,num_points):
 
 	def findClosestPoint(self,prev_point):
 		edges_remaining = self.lineFormationMatrix
@@ -110,7 +110,7 @@ class edge_detector(object):
 			ring_diam+=1
 
 	def formAllLines(self,edge_mat):
-		self.lineFormationMatrix = np.copy(edge_mat)
+		self.lineFormationMatrix = self.roundAll(np.copy(edge_mat))
 		edge_lines_list = []
 		row_count=0
 		col_count=0
@@ -118,9 +118,17 @@ class edge_detector(object):
 			col_count=0
 			for col in row:
 				if edge_mat[row_count][col_count]==1:
-					edge_lines_list.append(self.formLine([row_count,col_count]))
+					tempM, tempB = self.formLine([row_count,col_count])
+					edge_lines_list.append([tempM,tempB])
 				col_count+=1
 			row_count+=1
+		return edge_lines_list
+
+	def roundAll(self, mat):
+		for row in mat:
+			for col in row:
+				col = np.around(col)
+		return mat
 
 	def formLine(self, base_point):
 		# method setup
@@ -149,10 +157,11 @@ class edge_detector(object):
 			potentialpts=list_of_pts[:]
 			potentialpts.append(next_pt)
 			nextm, nextb = self.calculateBestFit(potentialpts)
-		return m,b
+		return [m,b]
 
 	def removeAddedPtsFromLineFormationMatrix(self,list_of_pts):
 		for pt in list_of_pts:
+			print pt
 			self.lineFormationMatrix[pt[0]][pt[1]]=0
 
 	def cost(self,line1,line2):
