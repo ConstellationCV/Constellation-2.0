@@ -142,7 +142,7 @@ class edge_detector(object):
 			for otherLine in list_of_lines:
 				if line==otherLine:
 					continue
-				if math.abs(self.evalLinearFunction(line[0],line[1],1)-(otherLine[0],otherLine[1],1))<10 and math.abs(self.evalLinearFunction(line[0],line[1],2)-(otherLine[0],otherLine[1],2))<10 and math.abs(self.evalLinearFunction(line[0],line[1],3)-(otherLine[0],otherLine[1],3))<10:
+				if abs(self.evalLinearFunction(line[0],line[1],1)-self.evalLinearFunction(otherLine[0],otherLine[1],1))<10 and abs(self.evalLinearFunction(line[0],line[1],2)-self.evalLinearFunction(otherLine[0],otherLine[1],2))<10 and abs(self.evalLinearFunction(line[0],line[1],3)-self.evalLinearFunction(otherLine[0],otherLine[1],3))<10:
 					list_of_lines.remove(otherLine)
 		return list_of_lines
 
