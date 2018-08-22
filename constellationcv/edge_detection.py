@@ -119,6 +119,8 @@ class edge_detector(object):
 		return edge_lines_list
 
 	def formLine(self, base_point):
+		if self.lines_edge_pts_list==[]:
+			return [-1,-1,-1,-1]
 		# method setup
 		v=Vectors()
 		line_pts = []
@@ -126,20 +128,33 @@ class edge_detector(object):
 		# loop setup
 		line_pts.append(base_point)
 		self.lines_edge_pts_list = sorted(self.lines_edge_pts_list, key=lambda (point): v.distance(point, base_point))[1:]
-		next_pt = self.lines_edge_pts_list[0]
+		try:
+			next_pt = self.lines_edge_pts_list[0]
+		except Exception as e:
+			return [-1,-1,-1,-1] 
 		line_pts.append(next_pt)
 		self.lines_edge_pts_list = sorted(self.lines_edge_pts_list, key=lambda (point): v.distance(point, next_pt))[1:]
-		next_pt = self.lines_edge_pts_list[0]
+		try:
+			next_pt = self.lines_edge_pts_list[0]
+		except Exception as e:
+			return [-1,-1,-1,-1] 
 		line_pts.append(next_pt)
 
 		# loop variables setup
 		last_point=next_pt
 		self.lines_edge_pts_list = sorted(self.lines_edge_pts_list, key=lambda (point): v.distance(point, next_pt))[1:]
-		next_pt = self.lines_edge_pts_list[0]
+		try:
+			next_pt = self.lines_edge_pts_list[0]
+		except Exception as e:
+			return [-1,-1,-1,-1]
 
 		# line variables setup
 		m,b = self.calculateBestFit(line_pts)
-		nextm,nextb = self.calculateBestFit(copy.deepcopy(line_pts).append(next_pt))
+		potential_pts = copy.deepcopy(line_pts)
+		potential_pts.append(next_pt)
+		nextm,nextb = self.calculateBestFit(potential_pts)
+
+		print line_pts
 
 
 		while self.findAngleBetween(m,nextm)<10 and v.distance(last_point,next_pt)<100 and v.distance(last_point,[next_pt[0],self.evalLinearFunction(m,b,next_pt[0])])<100 and not next_pt==[-1,1] and not self.lines_edge_pts_list==[]:
@@ -148,7 +163,9 @@ class edge_detector(object):
 			self.lines_edge_pts_list = sorted(self.lines_edge_pts_list, key=lambda (point): v.distance(point, next_pt))[1:]
 			next_pt = self.lines_edge_pts_list[0]
 			m,b = self.calculateBestFit(line_pts)
-			nextm,nextb = self.calculateBestFit(copy.deepcopy(line_pts).append(next_pt))
+			potential_pts = copy.deepcopy(line_pts)
+			potential_pts.append(next_pt)
+			nextm,nextb = self.calculateBestFit(potential_pts)
 
 		if len(line_pts)==3:
 			return [-1,-1,-1,-1]
