@@ -118,49 +118,42 @@ class edge_detector(object):
 				edge_lines_list.append(tempLine)
 		return edge_lines_list
 
-
 	def formLine(self, base_point):
 		# method setup
-		v =Vectors()
-		by_distance = sorted(copy.deepcopy(self.lines_edge_pts_list), key=lambda (point): v.distance(base_point,point))
+		v=Vectors()
+		line_pts = []
+
 		# loop setup
-		second_pt = by_distance[1]
-		self.lines_edge_pts_list.remove(base_point)
-		self.lines_edge_pts_list.remove(second_pt)
-		by_distance = sorted(copy.deepcopy(self.lines_edge_pts_list), key=lambda (point): v.distance(second_pt,point))
-		third_pt = by_distance[0]
-		self.lines_edge_pts_list.remove(third_pt)
-		list_of_pts=[base_point, second_pt, third_pt]
-		m,b = self.calculateBestFit(list_of_pts)
-		by_distance = sorted(copy.deepcopy(self.lines_edge_pts_list), key=lambda (point): v.distance(third_pt,point))
-		next_pt = by_distance[0]
-		potentialpts=copy.deepcopy(list_of_pts)
-		potentialpts.append(next_pt)
-		nextm, nextb = self.calculateBestFit(potentialpts)
+		line_pts.append(base_point)
+		self.lines_edge_pts_list = sorted(self.lines_edge_pts_list, key=lambda (point): v.distance(point, base_point))[1:]
+		next_pt = self.lines_edge_pts_list[0]
+		line_pts.append(next_pt)
+		self.lines_edge_pts_list = sorted(self.lines_edge_pts_list, key=lambda (point): v.distance(point, next_pt))[1:]
+		next_pt = self.lines_edge_pts_list[0]
+		line_pts.append(next_pt)
 
-		# loop variables
-		last_point = third_pt
+		# loop variables setup
+		last_point=next_pt
+		self.lines_edge_pts_list = sorted(self.lines_edge_pts_list, key=lambda (point): v.distance(point, next_pt))[1:]
+		next_pt = self.lines_edge_pts_list[0]
 
-		print "-----"
-		print self.lines_edge_pts_list
-		print next_pt
+		# line variables setup
+		m,b = self.calculateBestFit(line_pts)
+		nextm,nextb = self.calculateBestFit(copy.deepcopy(line_pts).append(next_pt))
+
 
 		while self.findAngleBetween(m,nextm)<10 and v.distance(last_point,next_pt)<100 and v.distance(last_point,[next_pt[0],self.evalLinearFunction(m,b,next_pt[0])])<100 and not next_pt==[-1,1] and not self.lines_edge_pts_list==[]:
-			list_of_pts.append(next_pt)
-			self.lines_edge_pts_list.remove(next_pt)
-			m,b = self.calculateBestFit(list_of_pts)
 			last_point=next_pt
-			by_distance = sorted(copy.deepcopy(self.lines_edge_pts_list), key=lambda (point): v.distance(last_point,point))
-			next_pt = by_distance[0]
-			potentialpts=copy.deepcopy(list_of_pts)
-			potentialpts.append(next_pt)
-			nextm, nextb = self.calculateBestFit(potentialpts)
-			print next_pt
-		if len(list_of_pts)==3:
+			line_pts.append(next_pt)
+			self.lines_edge_pts_list = sorted(self.lines_edge_pts_list, key=lambda (point): v.distance(point, next_pt))[1:]
+			next_pt = self.lines_edge_pts_list[0]
+			m,b = self.calculateBestFit(line_pts)
+			nextm,nextb = self.calculateBestFit(copy.deepcopy(line_pts).append(next_pt))
+
+		if len(line_pts)==3:
 			return [-1,-1,-1,-1]
-		print "------------"
-		print list_of_pts
-		return [m,b,base_point,last_point]
+		else:
+			return [m,b,base_point,last_point]
 
 
 	# helper functions, commented out as not needed	
