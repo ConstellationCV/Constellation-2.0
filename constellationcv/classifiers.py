@@ -1,9 +1,9 @@
 from arithmetic_toolkit import Vectors
 from collections import Counter
-import tensorflow as tf
+# import tensorflow as tf
+from sklearn.neighbors import KNeighborsClassifier
 
-class knn_scratch():
-	"""docstring for KNN"""
+class knn_scratch(object):
 	def raw_majority_vote(self, labels):
 		votes = Counter(labels)
 		winner, _ = votes.most_common(1)[0]
@@ -28,7 +28,7 @@ class knn_scratch():
 		k_nearest_labels = [label for _, label in by_distance[:k]]
 		return self.majority_vote(k_nearest_labels)
 
-class network_scratch
+class network_scratch(object):
 	def sigmoid(t):
 		return 1/(1+math.exp(-t))
 
@@ -84,6 +84,25 @@ class network_scratch
 	def predict(input, network):
 		return feed_forward(network, input)[-1]
 
-class knn():
-	def print():
-		print "class not implemented"
+class knn(object):
+	"""class which represents a k-nearest neighbors model, used for predicting distance"""
+	# training data format -
+	# X = [[0], [1], [2], [3]]
+	# y = [0, 0, 1, 1]
+	def __init__(self, k):
+		"""initializes a new k nearest neighbors model with k=k
+		and trains model based on X,y"""
+		self.model = KNeighborsClassifier(n_neighbors=k)
+		self.train(X,y)
+
+	def train(self, X, y):
+		"""trains the model on inputs X and classifications y"""
+		self.model.fit(X,y)
+
+	def predict(self, x):
+		"""returns prediction for classification of x"""
+		return self.model.predict(x)
+
+	def probabilities(self, x):
+		"""returns list of probablities of each label for input x"""
+		return self.model.predict_proba(x)

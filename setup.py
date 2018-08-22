@@ -9,7 +9,8 @@ setup(name='constellationcv',
       license='MIT',
       packages=['constellationcv'],
       install_requires=[
-          'tensorflow',
+          'sklearn',
           'numpy',
+          'opencv-python'
       ],
       zip_safe=False)
