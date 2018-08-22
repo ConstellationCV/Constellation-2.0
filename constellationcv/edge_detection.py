@@ -79,7 +79,6 @@ class edge_detector(object):
 		try:
 			m=m_numerator/m_denominator
 		except Exception as e:
-			# print list_of_pts
 			m=0
 		b=m*x_transform*-1+y_transform
 		return m,b
@@ -106,12 +105,11 @@ class edge_detector(object):
 				c+=1
 			r+=1
 		self.edge_pts_list = self.flipXY(sorted(ptslist))
-		print type(self.edge_pts_list)
 		return self.edge_pts_list
 
-	def formAllLines(self,edge_list):
+	def formAllLines(self):
 		edge_lines_list = []
-		self.lines_edge_pts_list = copy.deepcopy(edge_list)
+		self.lines_edge_pts_list = copy.deepcopy(self.edge_pts_list)
 		for pt in self.lines_edge_pts_list:
 			tempLine = self.formLine(pt)
 			if tempLine[0]==-1:
@@ -120,17 +118,18 @@ class edge_detector(object):
 				edge_lines_list.append(tempLine)
 		return edge_lines_list
 
+
 	def formLine(self, base_point):
 		# method setup
 		v =Vectors()
 		by_distance = sorted(copy.deepcopy(self.lines_edge_pts_list), key=lambda (point): v.distance(base_point,point))
-
 		# loop setup
 		second_pt = by_distance[1]
 		self.lines_edge_pts_list.remove(base_point)
+		self.lines_edge_pts_list.remove(second_pt)
 		by_distance = sorted(copy.deepcopy(self.lines_edge_pts_list), key=lambda (point): v.distance(second_pt,point))
 		third_pt = by_distance[0]
-		self.lines_edge_pts_list.remove(base_point)
+		self.lines_edge_pts_list.remove(third_pt)
 		list_of_pts=[base_point, second_pt, third_pt]
 		m,b = self.calculateBestFit(list_of_pts)
 		by_distance = sorted(copy.deepcopy(self.lines_edge_pts_list), key=lambda (point): v.distance(third_pt,point))
@@ -142,7 +141,11 @@ class edge_detector(object):
 		# loop variables
 		last_point = third_pt
 
-		while self.findAngleBetween(m,nextm)<10 and v.distance(last_point,next_pt)<100 and v.distance(last_point,[next_pt[0],self.evalLinearFunction(m,b,next_pt[0])])<100 and not next_pt==[-1,1]:
+		print "-----"
+		print self.lines_edge_pts_list
+		print next_pt
+
+		while self.findAngleBetween(m,nextm)<10 and v.distance(last_point,next_pt)<100 and v.distance(last_point,[next_pt[0],self.evalLinearFunction(m,b,next_pt[0])])<100 and not next_pt==[-1,1] and not self.lines_edge_pts_list==[]:
 			list_of_pts.append(next_pt)
 			self.lines_edge_pts_list.remove(next_pt)
 			m,b = self.calculateBestFit(list_of_pts)
@@ -152,6 +155,7 @@ class edge_detector(object):
 			potentialpts=copy.deepcopy(list_of_pts)
 			potentialpts.append(next_pt)
 			nextm, nextb = self.calculateBestFit(potentialpts)
+			print next_pt
 		if len(list_of_pts)==3:
 			return [-1,-1,-1,-1]
 		print "------------"
