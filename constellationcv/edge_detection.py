@@ -37,62 +37,6 @@ class edge_detector(object):
 			row_count+=1
 		return edge_mat
 
-	def outputEdgeImage(self,edge_mat, output_path):
-		row_count=0
-		col_count=0
-		for row in self.image_gray:
-			col_count=0
-			for col in row:
-				self.image_gray[row_count][col_count]=edge_mat[row_count][col_count]
-				if edge_mat[row_count][col_count]==1:
-					self.image_gray[row_count][col_count]=0
-				else:
-					self.image_gray[row_count][col_count]=252
-				col_count+=1
-			row_count+=1
-		cv2.imwrite(output_path,self.image_gray)
-
-
-	def calculateBestFit(self, list_of_pts):
-		self.flipXY(list_of_pts)
-		transform_factor = list_of_pts[0]
-		x_transform = float(transform_factor[0])
-		y_transform = float(transform_factor[1])
-		new_list = copy.deepcopy(list_of_pts)
-		for pt in new_list:
-			pt[0]=float(pt[0])-x_transform
-			pt[1]=float(pt[1])-y_transform
-		x_sum = 0
-		y_sum = 0
-		for pt in new_list:
-			x_sum+=pt[0]
-			y_sum+=pt[1]
-		n = len(list_of_pts)
-		x_bar = x_sum/n
-		y_bar = y_sum/n
-		m_numerator = 0
-		for pt in new_list:
-			m_numerator+=(pt[0]-x_bar)*(pt[1]-y_bar)
-		m_denominator = 0
-		for pt in new_list:
-			m_denominator+=(pt[0]-x_bar)*(pt[0]-x_bar)
-		try:
-			m=m_numerator/m_denominator
-		except Exception as e:
-			m=0
-		b=m*x_transform*-1+y_transform
-		return m,b
-
-	def findAngleBetween(self,m1,m2):
-		theta1=math.degrees(math.atan(m1))
-		theta2=math.degrees(math.atan(m2))
-		return theta2-theta1
-
-	def evalLinearFunction(self,m,b,x):
-		return (m*x)+b
-
-	# def isWithinParallelBoundaries(self, m,b,num_points):
-
 	def createEdgePointsList(self, edge_mat):
 		r=0
 		c=0
@@ -116,7 +60,7 @@ class edge_detector(object):
 				continue
 			else:
 				edge_lines_list.append(tempLine)
-		return edge_lines_list
+		return self.cleanListOfLines(edge_lines_list)
 
 	def formLine(self, base_point):
 		if self.lines_edge_pts_list==[]:
@@ -154,7 +98,7 @@ class edge_detector(object):
 		potential_pts.append(next_pt)
 		nextm,nextb = self.calculateBestFit(potential_pts)
 
-		print line_pts
+		# print line_pts
 
 
 		while self.findAngleBetween(m,nextm)<10 and v.distance(last_point,next_pt)<100 and v.distance(last_point,[next_pt[0],self.evalLinearFunction(m,b,next_pt[0])])<100 and not next_pt==[-1,1] and not self.lines_edge_pts_list==[]:
@@ -194,19 +138,78 @@ class edge_detector(object):
 	"""
 
 	def cleanListOfLines(self, list_of_lines):
-		return 1
+		for line in list_of_lines:
+			for otherLine in list_of_lines:
+				if line==otherLine:
+					continue
+				if math.abs(self.evalLinearFunction(line[0],line[1],1)-(otherLine[0],otherLine[1],1))<10 and math.abs(self.evalLinearFunction(line[0],line[1],2)-(otherLine[0],otherLine[1],2))<10 and math.abs(self.evalLinearFunction(line[0],line[1],3)-(otherLine[0],otherLine[1],3))<10:
+					list_of_lines.remove(otherLine)
+		return list_of_lines
 
 	def flipXY(self, list_of_pts):
 		for pt in list_of_pts:
 			pt.reverse()
 		return list_of_pts
 
+	def evalLinearFunction(self,m,b,x):
+		return (m*x)+b
+
+	def findAngleBetween(self,m1,m2):
+		theta1=math.degrees(math.atan(m1))
+		theta2=math.degrees(math.atan(m2))
+		return theta2-theta1
+
+	def calculateBestFit(self, list_of_pts):
+		self.flipXY(list_of_pts)
+		transform_factor = list_of_pts[0]
+		x_transform = float(transform_factor[0])
+		y_transform = float(transform_factor[1])
+		new_list = copy.deepcopy(list_of_pts)
+		for pt in new_list:
+			pt[0]=float(pt[0])-x_transform
+			pt[1]=float(pt[1])-y_transform
+		x_sum = 0
+		y_sum = 0
+		for pt in new_list:
+			x_sum+=pt[0]
+			y_sum+=pt[1]
+		n = len(list_of_pts)
+		x_bar = x_sum/n
+		y_bar = y_sum/n
+		m_numerator = 0
+		for pt in new_list:
+			m_numerator+=(pt[0]-x_bar)*(pt[1]-y_bar)
+		m_denominator = 0
+		for pt in new_list:
+			m_denominator+=(pt[0]-x_bar)*(pt[0]-x_bar)
+		try:
+			m=m_numerator/m_denominator
+		except Exception as e:
+			m=0
+		b=m*x_transform*-1+y_transform
+		return m,b
+
+	# tool functions
+
+	def outputEdgeImage(self,edge_mat, output_path):
+		row_count=0
+		col_count=0
+		for row in self.image_gray:
+			col_count=0
+			for col in row:
+				self.image_gray[row_count][col_count]=edge_mat[row_count][col_count]
+				if edge_mat[row_count][col_count]==1:
+					self.image_gray[row_count][col_count]=0
+				else:
+					self.image_gray[row_count][col_count]=252
+				col_count+=1
+			row_count+=1
+		cv2.imwrite(output_path,self.image_gray)
+
 	def printEquations(self, list_of_fxns):
 		for fxn in list_of_fxns:
 			eqn = "y="+str(fxn[0])+"x+"+str(fxn[1])+" { "+str(fxn[2][0]) + "<=x<="+str(fxn[3][0])+" }"
 			print eqn
-
-
 
 
 
