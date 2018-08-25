@@ -101,11 +101,14 @@ class edge_detector(object):
 		# print line_pts
 
 
-		while self.findAngleBetween(m,nextm)<10 and v.distance(last_point,next_pt)<100 and v.distance(last_point,[next_pt[0],self.evalLinearFunction(m,b,next_pt[0])])<100 and not next_pt==[-1,1] and not self.lines_edge_pts_list==[]:
+		while self.findAngleBetween(m,nextm)<3 and v.distance(last_point,next_pt)<80 and v.distance(last_point,[next_pt[0],self.evalLinearFunction(m,b,next_pt[0])])<60 and not next_pt==[-1,1] and not self.lines_edge_pts_list==[]:
 			last_point=next_pt
 			line_pts.append(next_pt)
 			self.lines_edge_pts_list = sorted(self.lines_edge_pts_list, key=lambda (point): v.distance(point, next_pt))[1:]
-			next_pt = self.lines_edge_pts_list[0]
+			try:
+				next_pt = self.lines_edge_pts_list[0]
+			except Exception as e:
+				break
 			m,b = self.calculateBestFit(line_pts)
 			potential_pts = copy.deepcopy(line_pts)
 			potential_pts.append(next_pt)
@@ -119,7 +122,6 @@ class edge_detector(object):
 
 	# helper functions, commented out as not needed	
 
-	"""
 	def roundAll(self, mat):
 		for row in mat:
 			for col in row:
@@ -135,14 +137,13 @@ class edge_detector(object):
 
 	def value(self,x):
 		return math.sqrt(x)
-	"""
 
 	def cleanListOfLines(self, list_of_lines):
 		for line in list_of_lines:
 			for otherLine in list_of_lines:
 				if line==otherLine:
 					continue
-				if abs(self.evalLinearFunction(line[0],line[1],1)-self.evalLinearFunction(otherLine[0],otherLine[1],1))<10 and abs(self.evalLinearFunction(line[0],line[1],2)-self.evalLinearFunction(otherLine[0],otherLine[1],2))<10 and abs(self.evalLinearFunction(line[0],line[1],3)-self.evalLinearFunction(otherLine[0],otherLine[1],3))<10:
+				if abs(self.evalLinearFunction(line[0],line[1],1)-self.evalLinearFunction(otherLine[0],otherLine[1],1))<10 and abs(self.evalLinearFunction(line[0],line[1],2)-self.evalLinearFunction(otherLine[0],otherLine[1],2))<20 and abs(self.evalLinearFunction(line[0],line[1],3)-self.evalLinearFunction(otherLine[0],otherLine[1],3))<10:
 					list_of_lines.remove(otherLine)
 		return list_of_lines
 
@@ -206,10 +207,12 @@ class edge_detector(object):
 			row_count+=1
 		cv2.imwrite(output_path,self.image_gray)
 
-	def printEquations(self, list_of_fxns):
+	def printFullEquations(self, list_of_fxns):
 		for fxn in list_of_fxns:
 			eqn = "y="+str(fxn[0])+"x+"+str(fxn[1])+" { "+str(fxn[2][0]) + "<=x<="+str(fxn[3][0])+" }"
 			print eqn
 
-
-
+	def printEquations(self, list_of_fxns):
+		for fxn in list_of_fxns:
+			eqn = "y="+str(fxn[0])+"x+"+str(fxn[1])
+			print eqn

@@ -2,6 +2,7 @@ from arithmetic_toolkit import Vectors
 from collections import Counter
 # import tensorflow as tf
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neural_network import MLPClassifier
 
 class knn_scratch(object):
 	def raw_majority_vote(self, labels):
@@ -106,3 +107,25 @@ class knn(object):
 	def probabilities(self, x):
 		"""returns list of probablities of each label for input x"""
 		return self.model.predict_proba(x)
+
+class neural_network(object):
+	def __init__(self):
+		self.clf = MLPClassifier(solver='lbgfs', alpha=1e-5, hidden_layer_sizes-(5,2),random_state=1)
+	
+	def train(self, X, y):
+		X = self.flatten(X)
+		self.clf.fit(X,y)
+
+	def flatten(self, matrix):
+		new_X = []
+		for row in matrix:
+			row_arr = []
+			for col in row:
+				row_arr.append(col[0])
+				row_arr.append(col[1])
+			new_X.append(row_arr)
+		return new_X
+
+	def predict(self, Xarr):
+		return self.clf.predict(Xarr)
+
