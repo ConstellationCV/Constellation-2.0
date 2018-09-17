@@ -110,7 +110,7 @@ class knn(object):
 
 class neural_network(object):
 	def __init__(self):
-		self.clf = MLPClassifier(solver='lbgfs', alpha=1e-5, hidden_layer_sizes-(5,2),random_state=1)
+		self.clf = MLPClassifier(solver='lbfgs', alpha=1e-5,hidden_layer_sizes=(5, 2), random_state=1)
 	
 	def train(self, X, y):
 		X = self.flatten(X)
