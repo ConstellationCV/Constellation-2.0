@@ -1,6 +1,6 @@
 import cv2
-from arithmetic_toolkit import Matrices
-from arithmetic_toolkit import Vectors
+from .arithmetic_toolkit import Matrices
+from .arithmetic_toolkit import Vectors
 import numpy as np
 import copy
 import math
@@ -12,7 +12,7 @@ class edge_detector(object):
 		self.imagePath = imagePath
 		self.img_rgb = cv2.imread(imagePath)
 		self.image_gray = cv2.cvtColor(self.img_rgb,cv2.COLOR_BGR2GRAY)
-		
+
 	def findEdgeMatrix(self):
 		m = Matrices()
 		v = Vectors()
@@ -51,76 +51,10 @@ class edge_detector(object):
 		self.edge_pts_list = self.flipXY(sorted(ptslist))
 		return self.edge_pts_list
 
-	def formAllLines(self):
-		edge_lines_list = []
-		self.lines_edge_pts_list = copy.deepcopy(self.edge_pts_list)
-		for pt in self.lines_edge_pts_list:
-			tempLine = self.formLine(pt)
-			if tempLine[0]==-1:
-				continue
-			else:
-				edge_lines_list.append(tempLine)
-		return self.cleanListOfLines(edge_lines_list)
-
-	def formLine(self, base_point):
-		if self.lines_edge_pts_list==[]:
-			return [-1,-1,-1,-1]
-		# method setup
-		v=Vectors()
-		line_pts = []
-
-		# loop setup
-		line_pts.append(base_point)
-		self.lines_edge_pts_list = sorted(self.lines_edge_pts_list, key=lambda (point): v.distance(point, base_point))[1:]
-		try:
-			next_pt = self.lines_edge_pts_list[0]
-		except Exception as e:
-			return [-1,-1,-1,-1] 
-		line_pts.append(next_pt)
-		self.lines_edge_pts_list = sorted(self.lines_edge_pts_list, key=lambda (point): v.distance(point, next_pt))[1:]
-		try:
-			next_pt = self.lines_edge_pts_list[0]
-		except Exception as e:
-			return [-1,-1,-1,-1] 
-		line_pts.append(next_pt)
-
-		# loop variables setup
-		last_point=next_pt
-		self.lines_edge_pts_list = sorted(self.lines_edge_pts_list, key=lambda (point): v.distance(point, next_pt))[1:]
-		try:
-			next_pt = self.lines_edge_pts_list[0]
-		except Exception as e:
-			return [-1,-1,-1,-1]
-
-		# line variables setup
-		m,b = self.calculateBestFit(line_pts)
-		potential_pts = copy.deepcopy(line_pts)
-		potential_pts.append(next_pt)
-		nextm,nextb = self.calculateBestFit(potential_pts)
-
-		# print line_pts
 
 
-		while self.findAngleBetween(m,nextm)<3 and v.distance(last_point,next_pt)<80 and v.distance(last_point,[next_pt[0],self.evalLinearFunction(m,b,next_pt[0])])<60 and not next_pt==[-1,1] and not self.lines_edge_pts_list==[]:
-			last_point=next_pt
-			line_pts.append(next_pt)
-			self.lines_edge_pts_list = sorted(self.lines_edge_pts_list, key=lambda (point): v.distance(point, next_pt))[1:]
-			try:
-				next_pt = self.lines_edge_pts_list[0]
-			except Exception as e:
-				break
-			m,b = self.calculateBestFit(line_pts)
-			potential_pts = copy.deepcopy(line_pts)
-			potential_pts.append(next_pt)
-			nextm,nextb = self.calculateBestFit(potential_pts)
 
-		if len(line_pts)==3:
-			return [-1,-1,-1,-1]
-		else:
-			return [m,b,base_point,last_point]
-
-
-	# helper functions, commented out as not needed	
+	# helper functions, commented out as not needed
 
 	def roundAll(self, mat):
 		for row in mat:
@@ -210,9 +144,9 @@ class edge_detector(object):
 	def printFullEquations(self, list_of_fxns):
 		for fxn in list_of_fxns:
 			eqn = "y="+str(fxn[0])+"x+"+str(fxn[1])+" { "+str(fxn[2][0]) + "<=x<="+str(fxn[3][0])+" }"
-			print eqn
+			# print eqn
 
 	def printEquations(self, list_of_fxns):
 		for fxn in list_of_fxns:
 			eqn = "y="+str(fxn[0])+"x+"+str(fxn[1])
-			print eqn
+			# print eqn

@@ -1,4 +1,4 @@
-from arithmetic_toolkit import Vectors
+from .arithmetic_toolkit import Vectors
 from collections import Counter
 # import tensorflow as tf
 from sklearn.neighbors import KNeighborsClassifier
@@ -22,12 +22,14 @@ class knn_scratch(object):
 		else:
 			return self.majority_vote(labels[:-1]) # try again with the k-1 nearest
 
+	"""
 	def knn_classify(self, k, labeled_points, new_point):
-		"""each labeled point should be a pair (point, label)"""
+		# each labeled point should be a pair (point, label)
 		v = Vectors()
 		by_distance = sorted(labeled_points, key=lambda (point, _): abs(point-new_point))
 		k_nearest_labels = [label for _, label in by_distance[:k]]
 		return self.majority_vote(k_nearest_labels)
+	"""
 
 class network_scratch(object):
 	def sigmoid(t):
@@ -60,7 +62,7 @@ class network_scratch(object):
 		hidden_outputs, outputs = feed_forward(network, input_vector)
 
 		# the output * (1-ouput) is from the derivate of sigmoid
-		output_deltas = [output * (1-output) * (output-target) 
+		output_deltas = [output * (1-output) * (output-target)
 						for output, target, in zip(outputs, targets)]
 
 		# the output * (1-output) is from the derivate of sigmoid
@@ -111,7 +113,7 @@ class knn(object):
 class neural_network(object):
 	def __init__(self):
 		self.clf = MLPClassifier(solver='lbfgs', alpha=1e-5,hidden_layer_sizes=(5, 2), random_state=1)
-	
+
 	def train(self, X, y):
 		X = self.flatten(X)
 		self.clf.fit(X,y)
@@ -128,4 +130,3 @@ class neural_network(object):
 
 	def predict(self, Xarr):
 		return self.clf.predict(Xarr)
-
