@@ -23,7 +23,6 @@ class edge_detector(object):
 		row_count = 0
 		col_count = 0
 		threshold=10
-		reached = False
 		for row in img:
 			for col in row:
 				if row_count>=num_rows-1 or col_count>=num_cols-1 or row_count==0 or col_count==0:
