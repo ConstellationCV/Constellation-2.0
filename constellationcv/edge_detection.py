@@ -10,9 +10,11 @@ class edge_detector(object):
 	"""class which contains all functions to extract edges from an image"""
 	def __init__(self, imagePath):
 		self.imagePath = imagePath
-		self.img_rgb = cv2.imread(imagePath)
-		self.image_gray = cv2.cvtColor(self.img_rgb,cv2.COLOR_BGR2GRAY)
-		
+		self.img = cv2.imread(imagePath,0)
+		self.laplacian = cv2.Laplacian(img,cv2.CV_64F)
+		# self.img_rgb = cv2.imread(imagePath)
+		# self.image_gray = cv2.cvtColor(self.img_rgb,cv2.COLOR_BGR2GRAY)
+
 	def findEdgeMatrix(self):
 		m = Matrices()
 		v = Vectors()
@@ -75,13 +77,13 @@ class edge_detector(object):
 		try:
 			next_pt = self.lines_edge_pts_list[0]
 		except Exception as e:
-			return [-1,-1,-1,-1] 
+			return [-1,-1,-1,-1]
 		line_pts.append(next_pt)
 		self.lines_edge_pts_list = sorted(self.lines_edge_pts_list, key=lambda (point): v.distance(point, next_pt))[1:]
 		try:
 			next_pt = self.lines_edge_pts_list[0]
 		except Exception as e:
-			return [-1,-1,-1,-1] 
+			return [-1,-1,-1,-1]
 		line_pts.append(next_pt)
 
 		# loop variables setup
@@ -120,7 +122,7 @@ class edge_detector(object):
 			return [m,b,base_point,last_point]
 
 
-	# helper functions, commented out as not needed	
+	# helper functions, commented out as not needed
 
 	def roundAll(self, mat):
 		for row in mat:
