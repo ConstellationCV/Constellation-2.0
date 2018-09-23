@@ -1,6 +1,6 @@
 import cv2
-from arithmetic_toolkit import Matrices
-from arithmetic_toolkit import Vectors
+from .arithmetic_toolkit import Matrices
+from .arithmetic_toolkit import Vectors
 import numpy as np
 import copy
 import math
@@ -25,7 +25,6 @@ class edge_detector(object):
 		row_count = 0
 		col_count = 0
 		threshold=10
-		reached = False
 		for row in img:
 			for col in row:
 				if row_count>=num_rows-1 or col_count>=num_cols-1 or row_count==0 or col_count==0:
@@ -116,10 +115,6 @@ class edge_detector(object):
 			potential_pts.append(next_pt)
 			nextm,nextb = self.calculateBestFit(potential_pts)
 
-		if len(line_pts)==3:
-			return [-1,-1,-1,-1]
-		else:
-			return [m,b,base_point,last_point]
 
 
 	# helper functions, commented out as not needed
@@ -212,7 +207,7 @@ class edge_detector(object):
 	def printFullEquations(self, list_of_fxns):
 		for fxn in list_of_fxns:
 			eqn = "y="+str(fxn[0])+"x+"+str(fxn[1])+" { "+str(fxn[2][0]) + "<=x<="+str(fxn[3][0])+" }"
-			print eqn
+			# print eqn
 
 	def printEquations(self, list_of_fxns):
 		for fxn in list_of_fxns:

@@ -11,6 +11,7 @@ setup(name='constellationcv',
       install_requires=[
           'sklearn',
           'numpy',
-          'opencv-python'
+          'opencv-python',
+          'scipy'
       ],
       zip_safe=False)

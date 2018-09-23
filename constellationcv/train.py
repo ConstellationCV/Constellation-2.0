@@ -1,7 +1,7 @@
 import numpy as np
-from edge_detection import edge_detector
+from .edge_detection import edge_detector
 import os
-from classifiers import neural_network
+from .classifiers import neural_network
 import pickle
 
 class trainer(object):
@@ -13,12 +13,12 @@ class trainer(object):
 			os.remove("pickled_data/trained_net")
 		f=open("pickled_data/trained_net","wb")
 		clf = MLPClassifier(solver='lbfgs', alpha=1e-5,
-...                     hidden_layer_sizes=(5, 2), random_state=1)
+							hidden_layer_sizes=(5, 2), random_state=1)
 		self.createAllEdgesList(pathToImages)
 		# clf.fit(self.all_image_edges,)
 		pickle.dump(self.all_image_edges,f)
 		f.close()
-		
+
 	def createEdgeList(self, pathToImage):
 		e = edge_detector(pathToImage)
 		return e.createEdgePointsList(e.findEdgeMatrix())
@@ -27,7 +27,7 @@ class trainer(object):
 		list = []
 		for image in os.listdir(pathToImages):
 			if ".png" in image:
-				print "training on " + image
+				# print "training on " + image
 				list.append(self.createEdgeList(pathToImages+"/"+image))
 		self.all_image_edges = self.flatten(list)
 
