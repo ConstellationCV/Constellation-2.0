@@ -8,7 +8,7 @@ edgeMat = e.findEdgeMatrix()
 # e.outputEdgeImage(edgeMat,"edges_output.png")
 =======
 e.outputEdgeImage(edgeMat,"edges_output.png")
->>>>>>> 7ee19fcc8396706963ef51cabe4eee16db0afa49
+>>>>>>> be2887370a407dda19e47682273e6b556a343b84
 # e.printFullEquations(e.formAllLines())
 # np.savetxt('outputmat.txt', edgeMat)
 #print edgeMat[0][0]
